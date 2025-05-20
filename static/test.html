@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Uno Game Server Tester</title>
+  <style>
+    body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+    input, button { margin: 5px; padding: 5px; }
+    .console { background: #2d2d2d; padding: 10px; margin-top: 10px; height: 150px; overflow-y: auto; border: 1px solid #444; }
+    section { border: 1px solid #555; padding: 10px; margin-bottom: 20px; }
+    h2 { color: #61dafb; }
+  </style>
+</head>
+<body>
+  <h1>Uno Game Server Test-UI</h1>
+
+  <section>
+    <h2>WebSocket Verbindung <button onclick="clearConsole('wsConsole')">Konsole leeren</button></h2>
+    <input type="text" id="playerName" placeholder="Spielername" />
+    <button onclick="connectWebSocket()">Verbinden</button>
+    <button onclick="disconnectWebSocket()">Verbindung trennen</button>
+    <div class="console" id="wsConsole"></div>
+  </section>
+
+  <section>
+    <h2>Spielzustand (GET /state) <button onclick="clearConsole('stateConsole')">Konsole leeren</button></h2>
+    <button onclick="getState()">State abrufen</button>
+    <div class="console" id="stateConsole"></div>
+  </section>
+
+  <section>
+    <h2>Player ID</h2>
+    <input type="text" id="playerId" placeholder="Player ID" style="width: 100%;" />
+  </section>
+
+  <section>
+    <h2>Hand anzeigen (GET /hand/&lt;player_id&gt;) <button onclick="clearConsole('handConsole')">Konsole leeren</button></h2>
+    <button onclick="getHand()">Hand abrufen</button>
+    <div class="console" id="handConsole"></div>
+  </section>
+
+  <section>
+    <h2>Karte spielen (GET /play/&lt;player_id&gt;/&lt;color&gt;/&lt;value&gt;) <button onclick="clearConsole('playConsole')">Konsole leeren</button></h2>
+    <input type="text" id="cardColor" placeholder="Farbe (z. B. red)" />
+    <input type="text" id="cardValue" placeholder="Wert (z. B. 5, skip)" />
+    <button onclick="playCard()">Karte spielen</button>
+    <div class="console" id="playConsole"></div>
+  </section>
+
+  <section>
+    <h2>Karte ziehen (GET /draw/&lt;player_id&gt;) <button onclick="clearConsole('drawConsole')">Konsole leeren</button></h2>
+    <button onclick="drawCard()">Karte ziehen</button>
+    <div class="console" id="drawConsole"></div>
+  </section>
+
+  <script>
+    let socket = null;
+
+    function logToConsole(id, message) {
+      const el = document.getElementById(id);
+      const line = document.createElement("div");
+      line.textContent = `> ${message}`;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function connectWebSocket() {
+      const name = document.getElementById("playerName").value;
+      if (!name) {
+        alert("Bitte Spielername eingeben.");
+        return;
+      }
+      socket = new WebSocket(`ws://localhost:8000/ws/${name}`);
+
+      socket.onopen = () => logToConsole("wsConsole", `Verbunden als ${name}`);
+      socket.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        logToConsole("wsConsole", `${JSON.stringify(msg)}`);
+        if (msg.event === "join_success") {
+          document.getElementById("playerId").value = msg.data.id;
+        }
+      };
+      socket.onclose = () => logToConsole("wsConsole", "Verbindung geschlossen");
+      socket.onerror = (e) => logToConsole("wsConsole", `Fehler: ${e}`);
+    }
+
+    function disconnectWebSocket() {
+      if (socket) {
+        socket.close();
+        socket = null;
+      }
+    }
+
+    async function getState() {
+      const res = await fetch("http://localhost:8000/state");
+      const data = await res.json();
+      logToConsole("stateConsole", JSON.stringify(data, null, 2));
+    }
+
+    async function getHand() {
+      const playerId = document.getElementById("playerId").value;
+      const res = await fetch(`http://localhost:8000/hand/${playerId}`);
+      const data = await res.json();
+      logToConsole("handConsole", JSON.stringify(data, null, 2));
+    }
+
+    async function playCard() {
+      const playerId = document.getElementById("playerId").value;
+      const color = document.getElementById("cardColor").value;
+      const value = document.getElementById("cardValue").value;
+
+      const res = await fetch(`http://localhost:8000/play/${playerId}/${color}/${value}`);
+      const data = await res.json();
+      logToConsole("playConsole", JSON.stringify(data, null, 2));
+    }
+
+    async function drawCard() {
+      const playerId = document.getElementById("playerId").value;
+
+      const res = await fetch(`http://localhost:8000/draw/${playerId}`);
+      const data = await res.json();
+      logToConsole("drawConsole", JSON.stringify(data, null, 2));
+    }
+
+    function clearConsole(id) {
+      const el = document.getElementById(id);
+      el.innerHTML = "";
+    }
+  </script>
+</body>
+</html>
