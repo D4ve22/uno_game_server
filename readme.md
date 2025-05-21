@@ -148,12 +148,11 @@ GET /state
 
 #### Beispielantwort:
 ```json
-{
-  "players": ["Alice", "Bob"],
-  "current_player": "Alice",
-  "discard_top": { "color": "green", "value": "9" },
-  "started": true
-}
+{ 
+  "started": true, 
+  "players": [ { "name": "Alice", "no_of_cards": 7 }, { "name": "Bob", "no_of_cards": 7 } ], 
+  "current_player": "Alice", 
+  "top_discard": { "color": "yellow", "value": "7" } }
 ```
 
 ---
