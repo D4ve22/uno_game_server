@@ -71,7 +71,7 @@ class Game:
         current_player = None if self.get_current_player() is None else self.get_current_player().name
         return {
             "started": self.started,
-            "players": [p.name for p in self.players],
+            "players": [{"name": p.name, "no_of_cards": len(p.hand)} for p in self.players],
             "current_player": current_player,
             "top_discard": vars(self.discard_pile) if self.discard_pile else None
         }
