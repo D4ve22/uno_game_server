@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from game.game import Game
 from websocket.websocket_manager import broadcast, send_to_player, close_all_connections
 from game.card import Card, Color, Value
+from game.player import Player
 
 router = APIRouter()
 game = Game()
@@ -22,8 +23,6 @@ async def play_card(player_id: str, color: str, value: str):
     global game
     if not game.started:
         return {"error": "no_current_game"}
-    print(f"player_id: {player_id}")
-    print(f"game.get_current_player().id: {game.get_current_player().id}")
     if player_id == game.get_current_player().id:
         try:
             enum_color = Color(color.lower())
@@ -51,9 +50,9 @@ async def play_card(player_id: str, color: str, value: str):
                 next_player = game.get_current_player()
                 discarded_card = game.discard_pile
                 if discarded_card.is_action_card():
-                    await send_to_player(next_player.id, "your_turn", {"action": discarded_card.value})
+                    await send_next_turn_information(next_player, discarded_card.value)
                 else:
-                    await send_to_player(next_player.id, "your_turn", {"action": None})
+                    await send_next_turn_information(next_player, None)
                 return {"status": "Card played"}
         return {"error": "invalid_move"}
     return {"error": "not_your_turn"}
@@ -78,3 +77,8 @@ async def draw_card(player_id):
 @router.get("/state")
 def get_state():
     return game.get_game_state()
+
+
+async def send_next_turn_information(next_player: Player, action):
+    await send_to_player(next_player.id, "your_turn", {"action": None if action is None else action.value})
+
