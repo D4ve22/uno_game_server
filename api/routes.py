@@ -53,7 +53,7 @@ async def play_card(player_id: str, color: str, value: str):
                     await send_next_turn_information(next_player, discarded_card.value)
                 else:
                     await send_next_turn_information(next_player, None)
-                return {"status": "Card played"}
+            return {"status": "card_played"}
         return {"error": "invalid_move"}
     return {"error": "not_your_turn"}
 

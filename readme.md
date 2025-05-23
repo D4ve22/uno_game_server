@@ -103,7 +103,7 @@ GET /play/{player_id}/{color}/{value}
 
 #### Antwort:
 ```json
-{ "status": "Card played" }
+{ "status": "card_played" }
 ```
 
 #### Fehler:
@@ -152,7 +152,8 @@ GET /state
   "started": true, 
   "players": [ { "name": "Alice", "no_of_cards": 7 }, { "name": "Bob", "no_of_cards": 7 } ], 
   "current_player": "Alice", 
-  "top_discard": { "color": "yellow", "value": "7" } }
+  "top_discard": { "color": "yellow", "value": "7" }
+}
 ```
 
 ---
