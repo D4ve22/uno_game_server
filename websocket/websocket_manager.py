@@ -34,6 +34,7 @@ async def websocket_endpoint(ws: WebSocket, player_name: str):
             # Handle message
     except WebSocketDisconnect:
         del connections[player_id]
+        leaving_player = api.routes.game.get_player(player_id)
         api.routes.game.remove_player(player_id)
         if api.routes.game.started and len(api.routes.game.players) == 1:
             winner = api.routes.game.players[0]
@@ -42,7 +43,7 @@ async def websocket_endpoint(ws: WebSocket, player_name: str):
             for player in connections:
                 await connections[player].close()
         else:
-            await broadcast("player_left", {"player_id": player_id})
+            await broadcast("player_left", {"player_name": leaving_player.name})
 
 
 async def send_to_player(player_id: str, event: str, data):
