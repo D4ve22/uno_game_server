@@ -27,10 +27,12 @@ class Deck:
         random.shuffle(self.cards)
 
     def draw(self):
+        self.shuffle()
         return self.cards.pop() if self.cards else None
 
     def put(self, card: Card):
         self.cards.append(card)
+        self.shuffle()
 
     def reset(self):
         self.cards = self.generate_deck()
