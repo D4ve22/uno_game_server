@@ -33,19 +33,19 @@ Methode:   WebSocket
 
 ### WebSocket-Events (vom Server gesendet)
 
-| Event-Name        | Beschreibung                                        | Datenformat (`data`)                                 |
-|-------------------|-----------------------------------------------------|-------------------------------------------------------|
-| `join_success`    | Spieler erfolgreich beigetreten                     | `{ "id": "<player_id>" }`                            |
-| `name_already_in_use` | Spielername ist bereits vergeben              | `{}`                                                  |
-| `join_failed_game_full` | Es sind bereits 2 Spieler verbunden          | `{}`                                                  |
-| `player_joined`   | Anderer Spieler ist dem Spiel beigetreten          | `{ "player_name": "<name>" }`                         |
-| `game_started`    | Das Spiel wurde gestartet                           | `{}`                                                  |
-| `your_turn`       | Du bist am Zug                                      | `{ "action": null | "+2" | "+4" | "skip" }`          |
+| Event-Name        | Beschreibung                                        | Datenformat (`data`)                                                |
+|-------------------|-----------------------------------------------------|---------------------------------------------------------------------|
+| `join_success`    | Spieler erfolgreich beigetreten                     | `{ "id": "<player_id>" }`                                           |
+| `name_already_in_use` | Spielername ist bereits vergeben              | `{}`                                                                |
+| `join_failed_game_full` | Es sind bereits 2 Spieler verbunden          | `{}`                                                                |
+| `player_joined`   | Anderer Spieler ist dem Spiel beigetreten          | `{ "player_name": "<name>" }`                                       |
+| `game_started`    | Das Spiel wurde gestartet                           | `{}`                                                                |
+| `your_turn`       | Du bist am Zug                                      | `{ "action": null                                                   | "+2" | "+4" | "skip" }`          |
 | `card_played`     | Ein Spieler hat eine Karte gespielt                 | `{ "player": "<name>", "card": { "color": "...", "value": "..." }}` |
-| `card_drawn`      | Ein Spieler hat eine Karte gezogen                  | `{ "player": "<name>" }`                              |
-| `uno_called`      | Ein Spieler hat nur noch eine Karte                 | `{ "player": "<name>" }`                              |
-| `game_won`        | Ein Spieler hat gewonnen                            | `{ "winner": "<name>" }`                              |
-| `player_left`     | Ein Spieler hat das Spiel verlassen                 | `{ "player_id": "<id>" }`                             |
+| `card_drawn`      | Ein Spieler hat eine Karte gezogen                  | `{ "player": "<name>" }`                                            |
+| `uno_called`      | Ein Spieler hat nur noch eine Karte                 | `{ "player": "<name>" }`                                            |
+| `game_won`        | Ein Spieler hat gewonnen                            | `{ "winner": "<name>" }`                                            |
+| `player_left`     | Ein Spieler hat das Spiel verlassen                 | `{ "player_name": "<name>" }`                                       |
 
 > Alle Events werden als JSON gesendet:  
 ```json
