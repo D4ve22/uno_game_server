@@ -31,7 +31,7 @@ async def play_card(player_id: str, color: str, value: str):
             return {"error": "card_not_valid"}
         card = Card(color=enum_color, value=enum_value)
         current_player = game.get_current_player()
-        success = game.play_card(player_id, card)
+        success = await game.play_card(player_id, card)
         if success:
             await broadcast("card_played", {
                 "player": current_player.name,

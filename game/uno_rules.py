@@ -13,13 +13,10 @@ class UnoRules:
         )
 
     @staticmethod
-    def apply_card_effect(card: Card, game):
-        print(card.value)
+    async def apply_card_effect(card: Card, game):
         if card.value == Value.SKIP:
-            print("Vor next turn:", game.get_current_player())
             game.next_turn()
-            print("Nach next turn:", game.get_current_player())
-            api.routes.send_next_turn_information(game.get_current_player(), game.discard_pile.value)
+            await api.routes.send_next_turn_information(game.get_current_player(), game.discard_pile.value)
         elif card.value == Value.PLUS_2:
             next_player = game.players[(game.current_player_index + 1) % len(game.players)]
             for _ in range(2):

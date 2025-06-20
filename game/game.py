@@ -44,13 +44,13 @@ class Game:
             return self.players[self.current_player_index]
         return None
 
-    def play_card(self, player_id: str, card: Card):
+    async def play_card(self, player_id: str, card: Card):
         player = self.get_player(player_id)
         if player and UnoRules.is_valid_move(self.discard_pile, card) and player.has_card(card):
             player.play_card(card)
             self.deck.put(self.discard_pile)
             self.discard_pile = card
-            UnoRules.apply_card_effect(card, self)
+            await UnoRules.apply_card_effect(card, self)
             self.next_turn()
             return True
         return False
